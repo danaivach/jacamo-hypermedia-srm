@@ -16,18 +16,18 @@ git clone --recursive git@github.com:Interactions-HSG/jacamo-hypermedia.git
 
 Run `./gradlew`
 
-## Mocking HTTP requests
+## AAMAS 2024
+This repository holds the JaCaMo application that executes the experiments outlined in the paper titled "Enabling BDI Agents to Reason on a Dynamic Action Repertoire in Hypermedia Environments", presented in AAMAS 2024.
+The implementation uses the following libraries:
+- [hMAS-java](https://github.com/danaivach/hmas-java): A Java library for reading, writing, and interacting with resources based on the [Hypermedia MAS Ontology](https://purl.org/hmas/core).
+- [signifier-resolution-mechanism](https://github.com/danaivach/signifier-resolution-mechanism/tree/main): A Java implementation of a Signifier Resolution Mechanism (SRM), which resolves abstract actions of pre-defined AgentSpeak plans to concrete actions signified in the environment at run time. The SRM implementation overrides the native _option selection function_ of the Jason reasoning cycle [1].
 
-One simple solution for mocking HTTP requests is [MockServer](https://www.mock-server.com/):
+The application deploys Jason agents, where each agent uses a different version of an SRM. Each agent exhibits different behavior by performing signifier resolution according to different criteria:
+|                 | Action Availability | Satisfaction of Recommended Context | Satisfaction of Recommended Abilities |
+|-----------------|---------------------|-------------------------------------|---------------------------------------|
+| Agent A (Alice) |  &#x2612;           |  &#x2612;                           |  &#x2612;                             |
+| Agent B (Bob)   |  &#x2611;           |  &#x2612;                           |  &#x2612;                             |
+| Agent C (Carol) |  &#x2611;           |  &#x2611;                           |  &#x2612;                             |
+| Agent D (David) |  &#x2611;           |  &#x2611;                           |  &#x2611;                             |
 
-1. Add the expected HTTP responses in `mockserver/mockserver.json`. The format of an expectation is given in the [MockServer OpenAPI specification](https://app.swaggerhub.com/apis/jamesdbloom/mock-server-openapi/5.10.x#/Expectation).
-
-2. Run MockServer with [Docker](https://www.docker.com/). To use the expectation initialization file created in the previous step, you will have to use a bind mount and to set an environment variable like so:
-
-```
-docker run -v "$(pwd)"/mockserver/mockserver.json:/tmp/mockserver/mockserver.json \
--e MOCKSERVER_INITIALIZATION_JSON_PATH=/tmp/mockserver/mockserver.json \
--d --rm --name mockserver -p 1080:1080 mockserver/mockserver
-```
-
-The above command will run the Docker container in the background and will print the container ID. To stop the container: `docker stop CONTAINER_ID` 
+[1] Bordini, R. H., Hübner, J. F., & Wooldridge, M. (2007). Programming multi-agent systems in AgentSpeak using Jason. John Wiley & Sons.
